@@ -223,55 +223,6 @@ namespace Binary.UI
             return boundKeys.Contains(keyData);
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            // If a control inside TexEditorPropertyGrid is focused, do not capture keystrokes for search
-            if (this.TexEditorPropertyGrid.Focused || this.TexEditorPropertyGrid.ContainsFocus)
-            {
-                return base.ProcessCmdKey(ref msg, keyData);
-            }
-
-            // Define bound key combinations for menu actions
-            var boundKeys = new HashSet<Keys>
-            {
-                Keys.Control | Keys.A, // Add Texture
-                Keys.Control | Keys.D, // Remove Texture
-                Keys.Control | Keys.C, // Copy Texture
-                Keys.Control | Keys.R, // Replace Texture
-                Keys.Control | Keys.E  // Export Texture
-            };
-
-            // If a bound key is pressed, let the base handler process it
-            if (boundKeys.Contains(keyData))
-                return base.ProcessCmdKey(ref msg, keyData);
-
-            // Escape key: Clear search box if active
-            if (keyData == Keys.Escape && this.TexEditorSearchBox.Visible)
-            {
-                this.TexEditorSearchBox.Text = string.Empty;
-                this.TexEditorSearchBox.Visible = false;
-                this.TexEditorListView.Focus();
-                return true;
-            }
-
-            // Ignore non-character keys
-            if ((keyData & Keys.Modifiers) != Keys.None || keyData < Keys.Space || keyData > Keys.Z)
-                return base.ProcessCmdKey(ref msg, keyData);
-
-            // Activate the search box only if it's not already visible
-            if (!this.TexEditorSearchBox.Visible)
-            {
-                this.TexEditorSearchBox.Visible = true;
-                this.TexEditorSearchBox.Focus();
-            }
-
-            // Append the typed character to the search box
-            this.TexEditorSearchBox.Text += (char)keyData;
-            this.TexEditorSearchBox.SelectionStart = this.TexEditorSearchBox.Text.Length;
-    
-            return true;
-        }
-
         private void PositionSearchBox()
         {
             this.TexEditorSearchBox.Location = new Point(200, 30); // Place it at a visible location
